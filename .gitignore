@@ -4,3 +4,8 @@ results/
 saved_models/
 evaluation/data/
 optuna/
+baseline/*/
+*/.ipynb_checkpoints/
+figures/*.pdf
+figures/*.svg
+data/
