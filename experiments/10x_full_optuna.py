@@ -5,7 +5,7 @@ python -u 10x_optuna.py --model poe --donor 1 --split 0
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils
@@ -42,7 +42,7 @@ adata.obs.loc[val.index, 'set'] = 'val'
 
 params_experiment = {
     'study_name': f'10x_{args.donor}_{args.model}_filtered_{args.filter_non_binder}_full',
-    'comet_workspace': '10x',
+    'comet_workspace': None,
     'model_name': args.model,
     'balanced_sampling': 'clonotype',
     'metadata': ['binding_name', 'clonotype', 'donor'],

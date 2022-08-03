@@ -5,7 +5,7 @@ python -u covid_optuna.py --model poe --split 0
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils

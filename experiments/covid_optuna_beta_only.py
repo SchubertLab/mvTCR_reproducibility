@@ -6,7 +6,7 @@ to compare our model to tessa, we will define a clonotype on base of its cdr3bet
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils

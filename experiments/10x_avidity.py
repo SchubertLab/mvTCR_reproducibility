@@ -5,7 +5,7 @@ python -u 10x_avidity.py --model moe --donor 1 --split 0
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection_count_prediction import run_model_selection
 import tcr_embedding.utils_training as utils
