@@ -6,7 +6,7 @@ to compare our model to tessa, we will define a clonotype on base of its cdr3bet
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils
@@ -36,7 +36,7 @@ adata = adata[adata.obs['binding_name'].isin(const.HIGH_COUNT_ANTIGENS)]
 # subsample to get statistics
 random_seed = args.split
 
-adata.obs['group_col'] = [seq[1:-1] for seq in adata.obs['IR_VDJ_1_cdr3']]
+adata.obs['group_col'] = [seq[1:-1] for seq in adata.obs['IR_VDJ_1_junction_aa']]
 train_val, test = group_shuffle_split(adata, group_col='group_col', val_split=0.20, random_seed=random_seed)
 train, val = group_shuffle_split(train_val, group_col='group_col', val_split=0.25, random_seed=random_seed)
 
