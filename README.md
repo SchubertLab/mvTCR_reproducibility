@@ -1,5 +1,5 @@
 # Reproducibility
-This repo contains the code to reproduce the results from XXX
+This repo contains the code to reproduce the results from [Integrating T-cell receptor and transcriptome for large-scale single-cell immune profiling analysis](https://www.biorxiv.org/content/10.1101/2021.06.24.449733v2.abstract?%3Fcollection=).
 
 # Setup
 To reproduce the results, clone this repo via:
