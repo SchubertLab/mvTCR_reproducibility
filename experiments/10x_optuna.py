@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 
 adata = utils.load_data('10x')
-if args.donor is not None:
+if str(args.donor) != 'None':
     adata = adata[adata.obs['donor'] == f'donor_{args.donor}']
 if args.filter_non_binder:
     adata = adata[adata.obs['binding_name'].isin(const.HIGH_COUNT_ANTIGENS)]
@@ -52,7 +52,8 @@ params_experiment = {
     'balanced_sampling': 'clonotype',
     'metadata': ['binding_name', 'clonotype', 'donor'],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'10x_{args.donor}_{args.model}_split_{args.split}')
+                              f'10x_{args.donor}_{args.model}_split_{args.split}'),
+    'conditional': 'donor' if str(args.donor) == 'None' else None
 }
 
 if args.model == 'rna':
