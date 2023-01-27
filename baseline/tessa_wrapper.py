@@ -84,7 +84,7 @@ def run_model_atlas_query(dataset, donor=None, split='split_0'):
         donor = f'{donor}/'
 
     path_file = os.path.dirname(os.path.abspath(__file__))
-    dir_in = path_file + f'/../data/tessa/{dataset}/{donor}{split}'
+    dir_in = path_file + f'/../mvTCR/data/tessa/{dataset}/{donor}{split}'
     dir_out_atlas = path_file + f'/tmp/{dataset}/{donor}{split}/atlas'
     dir_out_query = path_file + f'/tmp/{dataset}/{donor}{split}/query'
     os.makedirs(dir_out_atlas, exist_ok=True)
