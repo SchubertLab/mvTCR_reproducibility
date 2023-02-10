@@ -14,6 +14,7 @@ from tcr_embedding.utils_preprocessing import group_shuffle_split
 import os
 import argparse
 import config.constants_10x as const
+from sklearn.preprocessing import OneHotEncoder
 
 
 utils.fix_seeds(42)
@@ -30,9 +31,13 @@ args = parser.parse_args()
 adata = utils.load_data('10x')
 if str(args.donor) != 'None':
     adata = adata[adata.obs['donor'] == f'donor_{args.donor}']
+else:
+    enc = OneHotEncoder(sparse=False)
+    enc.fit(adata.obs['donor'].to_numpy().reshape(-1, 1))
+    adata.obsm['donor'] = enc.transform(adata.obs['donor'].to_numpy().reshape(-1, 1))
+
 if args.filter_non_binder:
     adata = adata[adata.obs['binding_name'].isin(const.HIGH_COUNT_ANTIGENS)]
-
 
 # subsample to get statistics
 random_seed = args.split
@@ -44,6 +49,7 @@ adata.obs.loc[val.obs.index, 'set'] = 'val'
 adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
+print(adata.obs['set'].value_counts())
 
 params_experiment = {
     'study_name': f'10x_{args.donor}_{args.model}_filtered_{args.filter_non_binder}_split_{args.split}',
