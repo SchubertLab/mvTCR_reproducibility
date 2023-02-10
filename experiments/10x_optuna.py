@@ -11,6 +11,8 @@ from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils
 from tcr_embedding.utils_preprocessing import group_shuffle_split
 
+import scanpy as sc
+
 import os
 import argparse
 import config.constants_10x as const
@@ -25,6 +27,7 @@ parser.add_argument('--donor', type=str, default=None)
 parser.add_argument('--filter_non_binder', type=bool, default=True)
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
+parser.add_argument('--n_samples', type=int, default=None)
 args = parser.parse_args()
 
 
@@ -44,21 +47,25 @@ random_seed = args.split
 train_val, test = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
 train, val = group_shuffle_split(train_val, group_col='clonotype', val_split=0.25, random_seed=random_seed)
 
-adata.obs['set'] = 'train'
+if args.n_samples is not None:
+    sc.pp.subsample(train, n_obs=args.n_samples)
+
+adata.obs['set'] = None
+adata.obs.loc[train.obs.index, 'set'] = 'train'
 adata.obs.loc[val.obs.index, 'set'] = 'val'
 adata.obs.loc[test.obs.index, 'set'] = 'test'
-adata = adata[adata.obs['set'].isin(['train', 'val'])]
+adata = adata[adata.obs['set'].isin(['train', 'val'])].copy()
 
-print(adata.obs['set'].value_counts())
+n_samples_prefix = '' if args.n_samples is None else f'_{args.n_samples}'
 
 params_experiment = {
-    'study_name': f'10x_{args.donor}_{args.model}_filtered_{args.filter_non_binder}_split_{args.split}',
+    'study_name': f'10x_{args.donor}_{args.model}_filtered_{args.filter_non_binder}_split_{args.split}{n_samples_prefix}',
     'comet_workspace': None,
     'model_name': args.model,
     'balanced_sampling': 'clonotype',
     'metadata': ['binding_name', 'clonotype', 'donor'],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'10x_{args.donor}_{args.model}_split_{args.split}'),
+                              f'10x_{args.donor}_{args.model}_split_{args.split}{n_samples_prefix}'),
     'conditional': 'donor' if str(args.donor) == 'None' else None
 }
 
