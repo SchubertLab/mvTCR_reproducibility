@@ -14,6 +14,8 @@ from tcr_embedding.utils_preprocessing import group_shuffle_split
 import os
 import argparse
 
+import scanpy as sc
+
 
 utils.fix_seeds(42)
 
@@ -21,18 +23,23 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='poe')
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
+parser.add_argument('--n_samples', type=int, default=None)
 args = parser.parse_args()
 
 
 adata = utils.load_data('minervina/01_annotated_data.h5ad')
-print(len(adata))
+
 
 # subsample to get statistics
 random_seed = args.split
 train_val, test = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
 train, val = group_shuffle_split(train_val, group_col='clonotype', val_split=0.25, random_seed=random_seed)
 
-adata.obs['set'] = 'train'
+if args.n_samples is not None:
+    sc.pp.subsample(train, n_obs=args.n_samples)
+
+adata.obs['set'] = None
+adata.obs.loc[train.obs.index, 'set'] = 'train'
 adata.obs.loc[val.obs.index, 'set'] = 'val'
 adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
