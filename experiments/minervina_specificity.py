@@ -13,7 +13,6 @@ from tcr_embedding.utils_preprocessing import group_shuffle_split
 
 import os
 import argparse
-import config.constants_10x as const
 
 
 utils.fix_seeds(42)
@@ -46,7 +45,8 @@ params_experiment = {
     'balanced_sampling': 'clonotype',
     'metadata': [],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'minervina_{args.model}_split_{args.split}')
+                              f'minervina_{args.model}_split_{args.split}'),
+    'conditional': 'donor'
 }
 
 if args.model == 'rna':
