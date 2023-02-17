@@ -40,13 +40,13 @@ adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 
 params_experiment = {
-    'study_name': f'minervina_{args.model}_split_{args.split}',
+    'study_name': f'minervina_{args.model}_beta_split_{args.split}',
     'comet_workspace': None,
     'model_name': args.model,
     'balanced_sampling': 'clonotype',
     'metadata': [],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'minervina_{args.model}_split_{args.split}'),
+                              f'minervina_{args.model}_beta_split_{args.split}'),
     'beta_only': True,
     'conditional': 'donor'
 }
