@@ -40,13 +40,13 @@ adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 params_experiment = {
-    'study_name': f'haniffa_{args.model}_split_{args.seed}',
+    'study_name': f'haniffa_beta_{args.model}_split_{args.seed}',
     'comet_workspace': None,  # 'Covid',
     'model_name': args.model,
     'balanced_sampling': 'cdr3_beta',
     'metadata': ['clonotype', 'full_clustering'],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'haniffa_{args.model}_split_{args.seed}'),
+                              f'haniffa_beta_{args.model}_split_{args.seed}'),
     'conditional': 'patient_id',
     'beta_only': True
 }
