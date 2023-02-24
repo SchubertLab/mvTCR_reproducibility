@@ -21,6 +21,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='poe')
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--gpus', type=int, default=1)
+parser.add_argument('--rna_weight', type=float, default=5)
 args = parser.parse_args()
 
 
@@ -50,7 +51,9 @@ if args.model == 'rna':
 
 params_optimization = {
     'name': 'pseudo_metric',
-    'prediction_labels': ['clonotype', 'cell_type'],
+    'prediction_labels': {
+        'clonotype': 1,
+        'cell_type': args.rna_weight},
 }
 
 timeout = (2 * 24 * 60 * 60) - 300
