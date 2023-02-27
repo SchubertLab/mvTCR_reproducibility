@@ -21,57 +21,38 @@ random_seed = 42
 utils.fix_seeds(random_seed)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--rna_weight', type=int, default=1)
 parser.add_argument('--model', type=str, default='moe')
 parser.add_argument('--gpus', type=int, default=1)
+parser.add_argument('--seed', type=int, default=0)
 args = parser.parse_args()
 
 
 adata = utils.load_data('borcherding')
-print(len(adata))
 
-
-# Randomly select patients to be left out during training
-def get_n_patients(amount_patients):
-    if amount_patients <= 5:
-        return 0
-    else:
-        return 2
-
-
-holdout_patients = {}
-
-adata.obs['Tissue+Type'] = [f'{tissue}.{type_}' for tissue, type_ in zip(adata.obs['Tissue'], adata.obs['Type'])]
-counts = adata.obs.groupby('Tissue+Type')['Sample'].value_counts()
-for cat in adata.obs['Tissue+Type'].unique():
-    n = get_n_patients(len(counts[cat]))
-    choice = np.random.choice(counts[cat].index, n, replace=False).tolist()
-    holdout_patients[cat] = choice
-
-for patients in holdout_patients.values():
-    adata = adata[~adata.obs['Sample'].isin(patients)]
-
-train, val = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
+random_seed = args.seed
+sub, non_sub = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
+train, val = group_shuffle_split(sub, group_col='clonotype', val_split=0.20, random_seed=random_seed)
 adata.obs['set'] = 'train'
+adata.obs.loc[non_sub.obs.index, 'set'] = '-'
 adata.obs.loc[val.obs.index, 'set'] = 'val'
+adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
-print(len(adata))
 
 params_experiment = {
-    'study_name': f'borcherding_{args.model}_full_weight_{args.rna_weight}',
+    'study_name': f'borcherding_{args.model}_split_{args.seed}',
     'comet_workspace': None,  # 'borcherding',
     'model_name': args.model,
     'early_stop': 5,
     'balanced_sampling': 'clonotype',
     'metadata': ['clonotype', 'Sample', 'Type', 'Tissue', 'functional.cluster'],
-    'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna', f'borcherding_{args.model}_{args.rna_weight}')
+    'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna', f'borcherding_{args.model}_split_{args.seed}'),
 }
 
 params_optimization = {
     'name': 'pseudo_metric',
     'prediction_labels':
         {'clonotype': 1,
-         'functional.cluster': args.rna_weight}
+         'functional.cluster': 10}
 }
 
 timeout = (2 * 24 * 60 * 60) - 300
