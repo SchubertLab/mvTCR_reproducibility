@@ -5,7 +5,7 @@ python -u borcherding.py --gpus 1
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 import numpy as np
 

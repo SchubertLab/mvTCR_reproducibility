@@ -5,7 +5,7 @@ python -u borcherding.py --gpus 1
 import comet_ml
 
 import sys
-sys.path.append('..')
+sys.path.append('../mvTCR/')
 
 import numpy as np
 
@@ -32,8 +32,8 @@ adata = utils.load_data('borcherding')
 random_seed = args.seed
 sc.pp.subsample(adata, n_obs=20000, random_state=random_seed)
 
-train_val, test = group_shuffle_split(adata, group_col='clonotype', val_split=0.20, random_seed=random_seed)
-train, val = group_shuffle_split(train_val, group_col='clonotype', val_split=0.25, random_seed=random_seed)
+train_val, test = group_shuffle_split(adata, group_col='IR_VDJ_1_cdr3', val_split=0.20, random_seed=random_seed)
+train, val = group_shuffle_split(train_val, group_col='IR_VDJ_1_cdr3', val_split=0.25, random_seed=random_seed)
 
 adata.obs['set'] = 'train'
 adata.obs.loc[val.obs.index, 'set'] = 'val'
@@ -46,9 +46,10 @@ params_experiment = {
     'comet_workspace': None,  # 'borcherding',
     'model_name': args.model,
     'early_stop': 5,
-    'balanced_sampling': 'clonotype',
+    'balanced_sampling': 'IR_VDJ_1_cdr3',
     'metadata': ['clonotype', 'Sample', 'Type', 'Tissue', 'functional.cluster'],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna', f'borcherding_beta_{args.model}_split_{args.seed}'),
+    'beta_only': True,
 }
 
 params_optimization = {
