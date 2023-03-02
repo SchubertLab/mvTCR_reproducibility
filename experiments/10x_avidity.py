@@ -51,7 +51,7 @@ adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 
-path_model = f'mvTCR/saved_models/journal_2/10x/splits/{args.model}/10x_donor_{args.donor}_'
+path_model = f'saved_models/journal_2/10x/splits/{args.model}/10x_donor_{args.donor}_'
 path_model += f'split_{args.split}_{args.model}.pt'
 
 params_experiment = {

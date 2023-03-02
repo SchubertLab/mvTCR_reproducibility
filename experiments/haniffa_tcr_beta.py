@@ -31,12 +31,10 @@ adata = utils.load_data('haniffa')
 # subsample to get statistics
 random_seed = args.seed
 sc.pp.subsample(adata, n_obs=20000, random_state=random_seed)
-train_val, test = group_shuffle_split(adata, group_col='cdr3_beta', val_split=0.20, random_seed=random_seed)
-train, val = group_shuffle_split(train_val, group_col='cdr3_beta', val_split=0.25, random_seed=random_seed)
+train, val = group_shuffle_split(adata, group_col='cdr3_beta', val_split=0.25, random_seed=random_seed)
 
 adata.obs['set'] = 'train'
 adata.obs.loc[val.obs.index, 'set'] = 'val'
-adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 params_experiment = {
