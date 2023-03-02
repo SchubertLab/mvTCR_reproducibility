@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 
 adata = utils.load_data('10x')
-if args.donor is not None:
+if str(args.donor) != 'None':
     adata = adata[adata.obs['donor'] == f'donor_{args.donor}']
 if args.filter_non_binder:
     adata = adata[adata.obs['binding_name'].isin(const.HIGH_COUNT_ANTIGENS)]
@@ -45,8 +45,8 @@ adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 
-path_model = f'saved_models/journal/10x/splits/donor_{args.donor}/{args.model}/'
-path_model += f'{args.model}_donor_{args.donor}_split_{args.split}.pt'
+path_model = f'mvTCR/saved_models/journal_2/10x/splits/{args.model}/10x_donor_{args.donor}_'
+path_model += f'split_{args.split}_{args.model}.pt'
 
 params_experiment = {
     'study_name': f'10x_avidity_{args.donor}_{args.model}_split_{args.split}',
