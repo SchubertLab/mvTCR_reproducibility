@@ -44,15 +44,16 @@ adata.obs.loc[val.obs.index, 'set'] = 'val'
 adata.obs.loc[test.obs.index, 'set'] = 'test'
 adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
+n_samples_prefix = '' if args.n_samples is None else f'_{args.n_samples}'
 
 params_experiment = {
-    'study_name': f'minervina_{args.model}_split_{args.split}',
+    'study_name': f'minervina_{args.model}_split_{args.split}{n_samples_prefix}',
     'comet_workspace': None,
     'model_name': args.model,
     'balanced_sampling': 'clonotype',
     'metadata': [],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'minervina_{args.model}_split_{args.split}'),
+                              f'minervina_{args.model}_split_{args.split}{n_samples_prefix}'),
     'conditional': 'donor'
 }
 
