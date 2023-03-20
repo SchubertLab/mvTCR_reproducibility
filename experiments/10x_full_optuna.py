@@ -14,6 +14,7 @@ from tcr_embedding.utils_preprocessing import stratified_group_shuffle_split
 import os
 import argparse
 import config.constants_10x as const
+from sklearn.preprocessing import OneHotEncoder
 
 
 random_seed = 42
@@ -30,6 +31,10 @@ args = parser.parse_args()
 adata = utils.load_data('10x')
 if args.donor is not None:
     adata = adata[adata.obs['donor'] == f'donor_{args.donor}']
+else:
+    enc = OneHotEncoder(sparse=False)
+    enc.fit(adata.obs['donor'].to_numpy().reshape(-1, 1))
+    adata.obsm['donor'] = enc.transform(adata.obs['donor'].to_numpy().reshape(-1, 1))
 if args.filter_non_binder:
     adata = adata[adata.obs['binding_name'].isin(const.HIGH_COUNT_ANTIGENS)]
 
