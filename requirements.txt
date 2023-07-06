@@ -1,9 +1,10 @@
+celltypist
 scanpy==1.7.0
 scirpy==0.11
 numba==0.52.0
 pandas==1.2.3
-anndata==0.7.6
-leidenalg==0.8.4
+anndata==0.8.0
+leidenalg
 comet-ml
 numpy==1.20.3
 scikit-learn==0.24.1
@@ -11,4 +12,5 @@ scrublet==0.2.3
 tqdm
 optuna
 umap-learn==0.5.1
-torch==1.8.0 -f https://download.pytorch.org/whl/cu102/torch_stable.html
+#torch==1.8.0 -f https://download.pytorch.org/whl/torch_stable.html
+matplotlib==3.6

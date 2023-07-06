@@ -9,7 +9,7 @@ sys.path.append('../mvTCR/')
 
 from tcr_embedding.models.model_selection import run_model_selection
 import tcr_embedding.utils_training as utils
-from tcr_embedding.utils_preprocessing import group_shuffle_split
+from tcr_embedding.utils_preprocessing import group_shuffle_split, encode_tcr
 
 import os
 import argparse
@@ -27,6 +27,18 @@ args = parser.parse_args()
 
 adata = utils.load_data('haniffa')
 
+len_beta = adata.obs['IR_VDJ_1_junction_aa'].str.len().max()
+len_alpha= adata.obs['IR_VJ_1_junction_aa'].str.len().max()
+pad = max(len_beta, len_alpha)
+
+encode_tcr(adata, 'IR_VJ_1_junction_aa', 'IR_VDJ_1_junction_aa', pad)
+
+if args.conditional != 'None':
+    from sklearn.preprocessing import OneHotEncoder
+    enc = OneHotEncoder(sparse=False)
+    enc.fit(adata.obs[args.conditional].to_numpy().reshape(-1, 1))
+    adata.obsm[args.conditional] = enc.transform(adata.obs[args.conditional].to_numpy().reshape(-1, 1))
+
 # subsample to get statistics
 random_seed = args.seed
 sub, non_sub = group_shuffle_split(adata, group_col='clonotype', val_split=0.2, random_seed=random_seed)
@@ -38,14 +50,14 @@ adata = adata[adata.obs['set'].isin(['train', 'val'])]
 
 
 params_experiment = {
-    'study_name': f'haniffa_{args.model}_split_{args.seed}',
+    'study_name': f'til_{args.model}_split_{args.seed}',
     'comet_workspace': None,  # 'Covid',
     'model_name': args.model,
     'balanced_sampling': 'clonotype',
-    'metadata': ['clonotype', 'full_clustering'],
+    'metadata': ['clonotype', 'meta.cluster'],
     'save_path': os.path.join(os.path.dirname(__file__), '..', 'optuna',
-                              f'haniffa_{args.model}_split_{args.seed}'),
-    'conditional': 'patient_id'
+                              f'_til{args.model}_split_{args.seed}'),
+    'conditional': 'patient'
 }
 if args.model == 'rna':
     params_experiment['balanced_sampling'] = None
@@ -54,7 +66,7 @@ params_optimization = {
     'name': 'pseudo_metric',
     'prediction_labels':
         {'clonotype': 1,
-         'full_clustering': 1}
+         'meta.clutser': 1}
 }
 
 timeout = (2 * 24 * 60 * 60) - 300
