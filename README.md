@@ -7,29 +7,17 @@ To reproduce the results, clone this repo via:
 git clone git@github.com:SchubertLab/mvTCR_reproducibility.git
 ```
 
-Additionally, you will need to clone the mvTCR code within the folder mvTCR_reproducability:
+Additionally, you will need to install mvTCR v0.1.3 together with PyTorch v1.8.0.. We recommend to do this in an isolated conda environment.
 
-```
-git clone git@github.com:SchubertLab/mvTCR.git
-```
 
-## Linux
-Please run the following commands for a Linux-based OS:
+## Linux and Windows
+Please run the following commands:
+
 ```
 conda create --name mvTCR python=3.8.8 -y 
 conda activate mvTCR 
-pip install -r requirements.txt 
+pip install mvtcr==0.1.3 
 conda install nb_conda_kernels -y 
-```
-
-## Windows
-Please comment torch from the requirements.txt, i.e. write a # before torch. Then execute the line to install all the requirements except PyTorch:
-
-``` 
-conda create --name mvTCR python=3.8.8 -y
-conda activate mvTCR
-pip install -r requirements.txt 
-conda install nb_conda_kernels -y
 ```
 
 Then install PyTorch 1.8.0 with the correct CUDA Version following the command here: https://pytorch.org/get-started/previous-versions/
